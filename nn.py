@@ -38,4 +38,18 @@ xfloat=X.astype('float32')
 # Split training and testing data
 trainx, testx, trainy, testy=ttsplit(xfloat, yonehot, test_size=.2)
 
+# Set up CNN
+network=keras.models.Sequential()
+network.add(keras.layers.Dense(90, input_dim=(167), activation='sigmoid'))
+network.add(keras.layers.Dense(50, activation='sigmoid'))
+network.add(keras.layers.Dense(30, activation='sigmoid'))
+network.add(keras.layers.Dense(10, activation='sigmoid'))
+network.add(keras.layers.Dense(3, activation='sigmoid'))
+
+sgd=keras.optimizers.SGD(learning_rate=.1)
+network.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Run CNN
+network.fit(trainx, trainy, epochs=100, batch_size=128)
+print(network.evaluate(testx, testy))
 
