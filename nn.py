@@ -51,9 +51,10 @@ network.fit(trainx, trainy, epochs=30, batch_size=128)
 predicty=network.predict(testx)
 
 # Evaluate NN
-print(network.evaluate(testx, testy))
-print(predicty)
+score=network.evaluate(testx, testy)
+print("Accuracy: ", score[1])
 from_categorical = lambda x: 0 if x[0]>x[1] and x[0]>x[2] else 2 if x[2]>x[1] else 1
 predicty=list(map(from_categorical, predicty))
 testy=list(map(from_categorical, testy))
+print("Confusion matrix:")
 print(confusion_matrix(testy, predicty))
