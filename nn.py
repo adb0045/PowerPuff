@@ -13,6 +13,7 @@ import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split as ttsplit
+from sklearn.metrics import confusion_matrix
 
 # Read in data
 df1=pd.read_csv('heroes_information.csv')
@@ -38,4 +39,21 @@ xfloat=X.astype('float32')
 # Split training and testing data
 trainx, testx, trainy, testy=ttsplit(xfloat, yonehot, test_size=.2)
 
+# Set up NN
+network=keras.models.Sequential()
+network.add(keras.layers.Dense(3, input_dim=(167), activation='sigmoid'))
 
+sgd=keras.optimizers.SGD(learning_rate=.1)
+network.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Run NN
+network.fit(trainx, trainy, epochs=30, batch_size=128)
+predicty=network.predict(testx)
+
+# Evaluate NN
+print(network.evaluate(testx, testy))
+print(predicty)
+from_categorical = lambda x: 0 if x[0]>x[1] and x[0]>x[2] else 2 if x[2]>x[1] else 1
+predicty=list(map(from_categorical, predicty))
+testy=list(map(from_categorical, testy))
+print(confusion_matrix(testy, predicty))
